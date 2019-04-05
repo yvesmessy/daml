@@ -1,0 +1,82 @@
+# https://help.github.com/articles/about-codeowners/
+# Note that GitHub teams must have WRITE access to the repository.
+
+# Default owners for everything in the repo unless a later match takes
+# precedence.
+*           @digital-asset/daml-owners
+CODEOWNERS  @digital-asset/daml-owners # Only owners can change this file
+
+VERSION     @digital-asset/daml-approvers # Any approver can approve a release
+
+# Build / CI / environment
+/3rdparty/          @digital-asset/infrastructure
+/bazel_tools/       @digital-asset/infrastructure
+/build-scripts/     @digital-asset/infrastructure
+/ci/                @digital-asset/infrastructure
+/dev-env/           @digital-asset/infrastructure
+/hazel/             @digital-asset/infrastructure
+/nix/               @digital-asset/infrastructure
+/infra/             @digital-asset/infrastructure
+/pipeline/          @digital-asset/infrastructure
+/rules_daml/        @digital-asset/infrastructure
+/replacements/      @digital-asset/infrastructure
+BAZEL-JVM.md        @digital-asset/infrastructure
+BAZEL-haskell.md    @digital-asset/infrastructure
+BAZEL.md            @digital-asset/infrastructure
+BUILD               @digital-asset/infrastructure
+WORKSPACE           @digital-asset/infrastructure
+azure-pipelines.yml @digital-asset/infrastructure
+build.Jenkinsfile   @digital-asset/infrastructure
+build.ps1           @digital-asset/infrastructure
+build.sh            @digital-asset/infrastructure
+deps.bzl            @digital-asset/infrastructure
+dotfiles            @digital-asset/infrastructure
+
+# Language
+/compiler/          @digital-asset/language
+/daml-foundations/  @digital-asset/language
+/libs-haskell/      @digital-asset/language
+/ghc-lib/           @digital-asset/language
+
+# SDK
+/release/           @digital-asset/language @digital-asset/infrastructure
+/sdk/               @digital-asset/language
+/da-assistant/      @digital-asset/language
+/daml-assistant/    @digital-asset/language
+
+# Runtime
+/daml-lf/           @digital-asset/daml-lf
+/ledger/            @digital-asset/ledger
+/ledger-api/        @digital-asset/ledger
+
+# Ecosystems
+/language-support/          @digital-asset/java @digital-asset/scala @digital-asset/js
+/language-support/java/     @digital-asset/java
+/language-support/js/       @digital-asset/js
+/language-support/scala/    @digital-asset/scala
+/scala-protoc-plugins/      @digital-asset/scala
+
+# Tools
+/extractor/         @digital-asset/extractor
+/navigator/         @digital-asset/navigator
+/web-ide/           @digital-asset/language
+
+# Misc
+/docs/              @digital-asset/docs
+/notices-gen/       @digital-asset/approvers
+/oss-compliance/    @digital-asset/approvers
+
+CHANGELOG           @digital-asset/approvers
+CODE_OF_CONDUCT.md  @digital-asset/approvers
+CONTRIBUTING.md     @digital-asset/approvers
+COPYRIGHT           @digital-asset/owners
+LICENSE             @digital-asset/owners
+NOTICES             @digital-asset/owners
+README.md           @digital-asset/approvers
+daml-logo.png       @digital-asset/owners
+dependencies.yaml   @digital-asset/approvers
+package.json        @digital-asset/approvers
+release-dry-run.sh  @digital-asset/approvers
+scalafmt.sh         @digital-asset/approvers
+tsconfig.json       @digital-asset/approvers
+yarn.lock           @digital-asset/approvers
