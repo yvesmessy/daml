@@ -54,7 +54,7 @@ dotfiles            @digital-asset/infrastructure
 /language-support/java/     @digital-asset/java
 /language-support/js/       @digital-asset/js
 /language-support/scala/    @digital-asset/scala
-/scala-protoc-plugins/      @digital-asset/scala
+/scala-protoc-plugins/      @digital-asset/scala @digital-asset/ledger
 
 # Tools
 /extractor/         @digital-asset/extractor
