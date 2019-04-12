@@ -13,7 +13,7 @@ load(
     "c2hs_library",
 )
 load(
-    "@ai_formation_hazel//:hazel.bzl",
+    "@ai_formation_hazel//tools:mangling.bzl",
     "hazel_library",
 )
 load("//bazel_tools:hlint.bzl", "haskell_hlint")
