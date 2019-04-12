@@ -2,6 +2,10 @@
 # flag: --noremote_accept_cached
 build --remote_http_cache=https://bazel-cache.da-ext.net
 build --remote_upload_local_results=false
+# Don't download unnecessary intermediate build outputs.
+build --experimental_inmemory_jdeps_files
+build --experimental_inmemory_dotd_files
+build --experimental_remote_download_outputs=minimal
 # Enable the disk cache in addition to the http cache.
 # Requires nix/overrides/bazel/combined_cache.patch, so disabled for Windows!
 build:linux --disk_cache=.bazel-cache
