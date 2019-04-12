@@ -13,6 +13,10 @@ export LC_ALL=en_US.UTF-8
 
 EXEC_LOG_DIR="${BUILD_ARTIFACTSTAGINGDIRECTORY:-$PWD}"
 
+# Test "builds without bytes"
+bazel build @haskell_conduit//:conduit @haskell_lens//:lens
+exit 0
+
 # Bazel test only builds targets that are dependencies of a test suite
 # so do a full build first.
 (
