@@ -7,6 +7,10 @@ build --remote_upload_local_results=false
 build:linux --disk_cache=.bazel-cache
 build:darwin --disk_cache=.bazel-cache
 
+# XXX: Bazel 0.25 compatibility
+build --incompatible_bzl_disallow_load_after_statement=false
+build --incompatible_disallow_dict_plus=false
+
 # Improve remote cache hit rate by exluding environment variables from the
 # sandbox that are not whitelisted using --action_env.
 # This will become the default in a future Bazel release.
