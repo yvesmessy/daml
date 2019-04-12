@@ -18,9 +18,9 @@ steps:
       GOOGLE_APPLICATION_CREDENTIALS_CONTENT: $(GOOGLE_APPLICATION_CREDENTIALS_CONTENT)
       NIX_SECRET_KEY_CONTENT: $(NIX_SECRET_KEY_CONTENT)
 
-  - bash: ./fmt.sh --test
-    displayName: 'Platform-agnostic lints and checks'
-    condition: eq(variables['Agent.OS'], 'Linux')
+  # bash: ./fmt.sh --test
+  # displayName: 'Platform-agnostic lints and checks'
+  # condition: eq(variables['Agent.OS'], 'Linux')
 
   - bash: ci/configure-bazel.sh
     displayName: 'Configure Bazel'
