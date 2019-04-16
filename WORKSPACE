@@ -357,19 +357,23 @@ bind(
 load("@ai_formation_hazel//:hazel.bzl", "hazel_custom_package_github", "hazel_custom_package_hackage", "hazel_repositories")
 load("//hazel:packages.bzl", "core_packages", "packages")
 load("//bazel_tools:haskell.bzl", "add_extra_packages")
+load("@bazel_skylib//lib:dicts.bzl", "dicts")
 
 # XXX: We do not have access to an integer-simple version of GHC on Windows.
 # For the time being we build with GMP. See https://github.com/digital-asset/daml/issues/106
 use_integer_simple = not is_windows
 
 hazel_repositories(
-    core_packages = core_packages + {
-        "integer-simple": "0.1.1.1",
+    core_packages = dicts.add(
+        core_packages,
+        {
+            "integer-simple": "0.1.1.1",
 
-        # this is a core package, but not reflected in hazel/packages.bzl.
-        "haskeline": "0.7.4.2",
-        "Win32": "2.6.1.0",
-    },
+            # this is a core package, but not reflected in hazel/packages.bzl.
+            "haskeline": "0.7.4.2",
+            "Win32": "2.6.1.0",
+        },
+    ),
     exclude_packages = [
         "arx",
         "clock",
