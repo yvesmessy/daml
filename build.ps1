@@ -130,6 +130,9 @@ function build-full() {
 #ERROR: C:/users/vssadministrator/_bazel_vssadministrator/w3d6ug6o/external/haskell_c2hs/BUILD.bazel:17:1: syntax error at '",
 #"': expected ,
 
+# bazel shutdown
+# bazel clean --expunge
+
 Write-Output "Running in $mode mode"
 
 bazel shutdown
