@@ -136,6 +136,11 @@ function build-full() {
 Write-Output "Running in $mode mode"
 
 bazel shutdown
+bazel clean --expunge
+
+bazel build @io_tweag_rules_haskell_ghc_windows_amd64//:toolchain
+ls .\bazel-s\external\io_tweag_rules_haskell_ghc_windows_amd64\mingw\include\c++\7.2.0\bits\stl_raw_storage_iter.h
+bazel build @boringssl//:ssl
 
 if ($mode -eq "partial") {
     build-partial
