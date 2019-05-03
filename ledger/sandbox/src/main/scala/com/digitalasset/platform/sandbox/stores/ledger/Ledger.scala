@@ -76,11 +76,18 @@ object Ledger {
       jdbcUrl: String,
       ledgerId: String,
       timeProvider: TimeProvider,
+      acs: ActiveContractsInMemory,
       ledgerEntries: Seq[LedgerEntry],
       startMode: SqlStartMode
   )(implicit mat: Materializer, mm: MetricsManager): Future[Ledger] =
     //TODO (robert): casting from Seq to immutable.Seq, make ledgerEntries immutable throughout the Sandbox?
-    SqlLedger(jdbcUrl, Some(ledgerId), timeProvider, immutable.Seq(ledgerEntries: _*), startMode)
+    SqlLedger(
+      jdbcUrl,
+      Some(ledgerId),
+      timeProvider,
+      acs,
+      immutable.Seq(ledgerEntries: _*),
+      startMode)
 
   /** Wraps the given Ledger adding metrics around important calls */
   def metered(ledger: Ledger)(implicit mm: MetricsManager): Ledger = MeteredLedger(ledger)

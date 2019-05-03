@@ -7,6 +7,7 @@ import com.digitalasset.api.util.TimeProvider
 import com.digitalasset.ledger.api.testing.utils.AkkaBeforeAndAfterAll
 import com.digitalasset.platform.sandbox.MetricsAround
 import com.digitalasset.platform.sandbox.persistence.PostgresAroundEach
+import com.digitalasset.platform.sandbox.stores.ActiveContractsInMemory
 import org.scalatest.concurrent.AsyncTimeLimitedTests
 import org.scalatest.time.Span
 import org.scalatest.{AsyncWordSpec, Matchers}
@@ -29,6 +30,7 @@ class SqlLedgerSpec
         jdbcUrl = postgresFixture.jdbcUrl,
         ledgerId = None,
         timeProvider = TimeProvider.UTC,
+        acs = ActiveContractsInMemory(Map.empty, Map.empty),
         ledgerEntries = Nil)
 
       ledgerF.map { ledger =>
@@ -43,7 +45,9 @@ class SqlLedgerSpec
         jdbcUrl = postgresFixture.jdbcUrl,
         ledgerId = Some(ledgerId),
         timeProvider = TimeProvider.UTC,
-        ledgerEntries = Nil)
+        acs = ActiveContractsInMemory(Map.empty, Map.empty),
+        ledgerEntries = Nil
+      )
 
       ledgerF.map { ledger =>
         ledger.ledgerId should not be equal(ledgerId)
@@ -58,16 +62,21 @@ class SqlLedgerSpec
           jdbcUrl = postgresFixture.jdbcUrl,
           ledgerId = Some(ledgerId),
           timeProvider = TimeProvider.UTC,
-          ledgerEntries = Nil)
+          acs = ActiveContractsInMemory(Map.empty, Map.empty),
+          ledgerEntries = Nil
+        )
         ledger2 <- SqlLedger(
           jdbcUrl = postgresFixture.jdbcUrl,
           ledgerId = Some(ledgerId),
           timeProvider = TimeProvider.UTC,
-          ledgerEntries = Nil)
+          acs = ActiveContractsInMemory(Map.empty, Map.empty),
+          ledgerEntries = Nil
+        )
         ledger3 <- SqlLedger(
           jdbcUrl = postgresFixture.jdbcUrl,
           ledgerId = None,
           timeProvider = TimeProvider.UTC,
+          acs = ActiveContractsInMemory(Map.empty, Map.empty),
           ledgerEntries = Nil)
       } yield {
         ledger1.ledgerId should not be equal(ledgerId)
@@ -83,13 +92,15 @@ class SqlLedgerSpec
           jdbcUrl = postgresFixture.jdbcUrl,
           ledgerId = Some("TheLedger"),
           timeProvider = TimeProvider.UTC,
-          ledgerEntries = Nil
+          ledgerEntries = Nil,
+          acs = ActiveContractsInMemory(Map.empty, Map.empty),
         )
         _ <- SqlLedger(
           jdbcUrl = postgresFixture.jdbcUrl,
           ledgerId = Some("AnotherLedger"),
           timeProvider = TimeProvider.UTC,
-          ledgerEntries = Nil
+          ledgerEntries = Nil,
+          acs = ActiveContractsInMemory(Map.empty, Map.empty),
         )
       } yield (())
 

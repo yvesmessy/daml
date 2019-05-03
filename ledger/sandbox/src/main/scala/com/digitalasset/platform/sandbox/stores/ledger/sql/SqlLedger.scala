@@ -21,11 +21,16 @@ import com.digitalasset.platform.sandbox.config.LedgerIdGenerator
 import com.digitalasset.platform.sandbox.metrics.MetricsManager
 import com.digitalasset.platform.sandbox.services.transaction.SandboxEventIdFormatter
 import com.digitalasset.platform.sandbox.stores.ActiveContracts.ActiveContract
+import com.digitalasset.platform.sandbox.stores.ActiveContractsInMemory
 import com.digitalasset.platform.sandbox.stores.ledger.sql.SqlStartMode.{
   AlwaysReset,
   ContinueIfExists
 }
-import com.digitalasset.platform.sandbox.stores.ledger.sql.dao.{LedgerDao, PostgresLedgerDao}
+import com.digitalasset.platform.sandbox.stores.ledger.sql.dao.{
+  LedgerDao,
+  PersistenceEntry,
+  PostgresLedgerDao
+}
 import com.digitalasset.platform.sandbox.stores.ledger.sql.serialisation.{
   ContractSerializer,
   KeyHasher,
@@ -63,6 +68,7 @@ object SqlLedger {
       jdbcUrl: String,
       ledgerId: Option[String],
       timeProvider: TimeProvider,
+      acs: ActiveContractsInMemory,
       ledgerEntries: immutable.Seq[LedgerEntry],
       startMode: SqlStartMode = SqlStartMode.ContinueIfExists)(
       implicit mat: Materializer,
@@ -82,7 +88,7 @@ object SqlLedger {
 
     for {
       sqlLedger <- sqlLedgerFactory.createSqlLedger(ledgerId, timeProvider, startMode)
-      _ <- sqlLedger.loadStartingState(ledgerEntries)
+      _ <- sqlLedger.loadStartingState(acs, ledgerEntries)
     } yield sqlLedger
   }
 }
@@ -109,15 +115,15 @@ private class SqlLedger(
   // the reason for modelling persistence as a reactive pipeline is to avoid having race-conditions between the
   // moving ledger-end, the async persistence operation and the dispatcher head notification
   private val (checkpointQueue, persistenceQueue): (
-      SourceQueueWithComplete[Long => LedgerEntry],
-      SourceQueueWithComplete[Long => LedgerEntry]) = createQueues()
+      SourceQueueWithComplete[Long => PersistenceEntry],
+      SourceQueueWithComplete[Long => PersistenceEntry]) = createQueues()
 
   private def createQueues(): (
-      SourceQueueWithComplete[Long => LedgerEntry],
-      SourceQueueWithComplete[Long => LedgerEntry]) = {
+      SourceQueueWithComplete[Long => PersistenceEntry],
+      SourceQueueWithComplete[Long => PersistenceEntry]) = {
 
-    val checkpointQueue = Source.queue[Long => LedgerEntry](1, OverflowStrategy.dropHead)
-    val persistenceQueue = Source.queue[Long => LedgerEntry](128, OverflowStrategy.dropNew)
+    val checkpointQueue = Source.queue[Long => PersistenceEntry](1, OverflowStrategy.dropHead)
+    val persistenceQueue = Source.queue[Long => PersistenceEntry](128, OverflowStrategy.dropNew)
 
     implicit val ec: ExecutionContext = DE
 
@@ -126,7 +132,7 @@ private class SqlLedger(
         q1Mat -> q2Mat
     } { implicit b => (s1, s2) =>
       import akka.stream.scaladsl.GraphDSL.Implicits._
-      val merge = b.add(MergePreferred[Long => LedgerEntry](1))
+      val merge = b.add(MergePreferred[Long => PersistenceEntry](1))
 
       s1 ~> merge.preferred
       s2 ~> merge.in(0)
@@ -160,8 +166,8 @@ private class SqlLedger(
       .toMat(Sink.ignore)(
         Keep.left[
           (
-              SourceQueueWithComplete[Long => LedgerEntry],
-              SourceQueueWithComplete[Long => LedgerEntry]),
+              SourceQueueWithComplete[Long => PersistenceEntry],
+              SourceQueueWithComplete[Long => PersistenceEntry]),
           Future[Done]])
       .run()
   }
@@ -171,22 +177,12 @@ private class SqlLedger(
     ledgerDao.close()
   }
 
-  private def loadStartingState(ledgerEntries: immutable.Seq[LedgerEntry]): Future[Unit] =
+  private def loadStartingState(
+      acs: ActiveContractsInMemory,
+      ledgerEntries: immutable.Seq[LedgerEntry]): Future[Unit] =
     if (ledgerEntries.nonEmpty) {
       logger.info("initializing ledger with scenario output")
-      implicit val ec: ExecutionContext = DE
-      //ledger entries must be persisted via the transactionQueue!
-      val fDone = Source(ledgerEntries)
-        .mapAsync(1) { ledgerEntry =>
-          enqueue(_ => ledgerEntry)
-        }
-        .runWith(Sink.ignore)
-
-      // Note: the active contract set stored in the SQL database is updated through the insertion of ledger entries.
-      // The given active contract set is ignored.
-      for {
-        _ <- fDone
-      } yield ()
+      ledgerDao.storeInitialState(acs, ledgerEntries)
     } else Future.successful(())
 
   override def ledgerEntries(offset: Option[Long]): Source[(Long, LedgerEntry), NotUsed] = {
@@ -211,7 +207,7 @@ private class SqlLedger(
 
   override def publishHeartbeat(time: Instant): Future[Unit] =
     checkpointQueue
-      .offer(_ => LedgerEntry.Checkpoint(time))
+      .offer(_ => PersistenceEntry.Checkpoint(LedgerEntry.Checkpoint(time)))
       .map(_ => ())(DE) //this never pushes back, see createQueues above!
 
   override def publishTransaction(tx: TransactionSubmission): Future[SubmissionResult] =
@@ -231,20 +227,28 @@ private class SqlLedger(
               parties.toSet[String]
         }
 
-      LedgerEntry.Transaction(
-        tx.commandId,
-        transactionId,
-        tx.applicationId,
-        tx.submitter,
-        tx.workflowId,
-        tx.ledgerEffectiveTime,
-        timeProvider.getCurrentTime,
-        mappedTx,
-        mappedDisclosure
+      val mappedLocalImplicitDisclosure = tx.blindingInfo.localImplicitDisclosure.map {
+        case (k, v) => SandboxEventIdFormatter.fromTransactionId(transactionId, k) -> v
+      }
+
+      PersistenceEntry.Transaction(
+        LedgerEntry.Transaction(
+          tx.commandId,
+          transactionId,
+          tx.applicationId,
+          tx.submitter,
+          tx.workflowId,
+          tx.ledgerEffectiveTime,
+          timeProvider.getCurrentTime,
+          mappedTx,
+          mappedDisclosure
+        ),
+        mappedLocalImplicitDisclosure,
+        tx.blindingInfo.globalImplicitDisclosure
       )
     }
 
-  private def enqueue(f: Long => LedgerEntry): Future[SubmissionResult] = {
+  private def enqueue(f: Long => PersistenceEntry): Future[SubmissionResult] = {
     persistenceQueue
       .offer(f)
       .transform {

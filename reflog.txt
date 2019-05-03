@@ -1,0 +1,218 @@
+5361deb4 HEAD@{0}: commit: wip fixup
+f16fd3fa HEAD@{1}: rebase finished: returning to refs/heads/sandbox-sql-fetch-visibility
+f16fd3fa HEAD@{2}: rebase: Rename test
+9cd94d42 HEAD@{3}: rebase: wip fixup
+23644993 HEAD@{4}: rebase: wip fixup
+5135b5cb HEAD@{5}: rebase: wip
+45101fe0 HEAD@{6}: rebase: checkout origin/master
+847edf3a HEAD@{7}: commit: Rename test
+7deb733f HEAD@{8}: commit: wip fixup
+dd2ce34c HEAD@{9}: commit: wip fixup
+b44494d1 HEAD@{10}: commit: wip
+ff476dee HEAD@{11}: checkout: moving from master to sandbox-sql-fetch-visibility
+ff476dee HEAD@{12}: pull: Fast-forward
+7b81d69f HEAD@{13}: reset: moving to origin/master
+ccd95c37 HEAD@{14}: checkout: moving from sandbox-no-wallclock-scenario to master
+6f53389b HEAD@{15}: commit (amend): Reject running sandbox with --scenario and -w
+ccd95c37 HEAD@{16}: checkout: moving from master to sandbox-no-wallclock-scenario
+ccd95c37 HEAD@{17}: commit: Reject running sandbox with --scenario and -w
+7b81d69f HEAD@{18}: pull: Fast-forward
+d9f5097e HEAD@{19}: checkout: moving from navigator-console-templates-crash to master
+add276a8 HEAD@{20}: rebase -i (finish): returning to refs/heads/navigator-console-templates-crash
+add276a8 HEAD@{21}: rebase -i (fixup): Navigator: fix display of tables on dumb terminals
+e2971e61 HEAD@{22}: rebase -i (pick): Navigator: fix display of tables on dumb terminals
+e146b5b1 HEAD@{23}: rebase -i (pick): Navigator: Fix pretty-printing empty objects
+93d1c35c HEAD@{24}: rebase -i (start): checkout origin/master
+b3d4e7d1 HEAD@{25}: commit: fixup
+6481bd06 HEAD@{26}: reset: moving to HEAD
+6481bd06 HEAD@{27}: commit: Navigator: fix display of tables on dumb terminals
+b6027e59 HEAD@{28}: commit: Navigator: Fix pretty-printing empty objects
+d9f5097e HEAD@{29}: checkout: moving from master to navigator-console-templates-crash
+d9f5097e HEAD@{30}: reset: moving to origin/master
+7c47e22b HEAD@{31}: checkout: moving from sandbox-sql-key-hashing to master
+e7269aaf HEAD@{32}: rebase finished: returning to refs/heads/sandbox-sql-key-hashing
+e7269aaf HEAD@{33}: rebase: Implement stable hashing of contract keys in SQL sandbox
+d9f5097e HEAD@{34}: rebase: checkout origin/master
+a2ae0f04 HEAD@{35}: commit (amend): Implement stable hashing of contract keys in SQL sandbox
+4af51275 HEAD@{36}: commit (amend): Implement stable hashing of contract keys in SQL sandbox
+7143d609 HEAD@{37}: commit (amend): Implement stable hashing of contract keys in SQL sandbox
+75e24dbd HEAD@{38}: commit (amend): Implement stable hashing of contract keys in SQL sandbox
+75ec3b30 HEAD@{39}: rebase -i (finish): returning to refs/heads/sandbox-sql-key-hashing
+75ec3b30 HEAD@{40}: rebase -i (start): checkout origin/master
+75ec3b30 HEAD@{41}: rebase -i (finish): returning to refs/heads/sandbox-sql-key-hashing
+75ec3b30 HEAD@{42}: rebase -i (reword): Implement stable hashing of contract keys in SQL sandbox
+5ca27ee1 HEAD@{43}: rebase -i: fast-forward
+e54ec705 HEAD@{44}: rebase -i (start): checkout origin/master
+5ca27ee1 HEAD@{45}: rebase -i (finish): returning to refs/heads/sandbox-sql-key-hashing
+5ca27ee1 HEAD@{46}: rebase -i (reword): Add support for contract keys to SQL sandbox
+ebad5fd6 HEAD@{47}: rebase -i: fast-forward
+e54ec705 HEAD@{48}: rebase -i (start): checkout origin/master
+ebad5fd6 HEAD@{49}: rebase -i (finish): returning to refs/heads/sandbox-sql-key-hashing
+ebad5fd6 HEAD@{50}: rebase -i (fixup): wip
+b92be85b HEAD@{51}: rebase -i (fixup): # This is a combination of 5 commits.
+c39afc30 HEAD@{52}: rebase -i (fixup): # This is a combination of 4 commits.
+f11a95b0 HEAD@{53}: rebase -i (fixup): # This is a combination of 3 commits.
+bb9aacfd HEAD@{54}: rebase -i (fixup): # This is a combination of 2 commits.
+3896c478 HEAD@{55}: rebase -i (pick): wip
+e54ec705 HEAD@{56}: rebase -i (start): checkout origin/master
+8b5be057 HEAD@{57}: commit: scalafmt
+075d218f HEAD@{58}: checkout: moving from navigator-console-json-arguments to sandbox-sql-key-hashing
+79479fb2 HEAD@{59}: rebase finished: returning to refs/heads/navigator-console-json-arguments
+79479fb2 HEAD@{60}: rebase: Navigator: Output arguments in JSON format
+51592a64 HEAD@{61}: rebase: Navigator: Fix console documentation
+e54ec705 HEAD@{62}: rebase: checkout origin/master
+21c6c81b HEAD@{63}: checkout: moving from sandbox-sql-key-hashing to navigator-console-json-arguments
+075d218f HEAD@{64}: commit: wip
+9e3865eb HEAD@{65}: commit: wip
+efb74ca9 HEAD@{66}: rebase finished: returning to refs/heads/sandbox-sql-key-hashing
+efb74ca9 HEAD@{67}: rebase: wip
+41424af0 HEAD@{68}: rebase: wip
+f1862d5a HEAD@{69}: rebase: wip
+a504bbdc HEAD@{70}: rebase: checkout origin/master
+47b18930 HEAD@{71}: commit: wip
+206f9980 HEAD@{72}: rebase finished: returning to refs/heads/sandbox-sql-key-hashing
+206f9980 HEAD@{73}: rebase: wip
+76f377f0 HEAD@{74}: rebase: wip
+2e30477f HEAD@{75}: rebase: checkout origin/master
+7e00c709 HEAD@{76}: checkout: moving from navigator-console-json-arguments to sandbox-sql-key-hashing
+21c6c81b HEAD@{77}: rebase -i (finish): returning to refs/heads/navigator-console-json-arguments
+21c6c81b HEAD@{78}: rebase -i (pick): Navigator: Output arguments in JSON format
+74ea8ac6 HEAD@{79}: rebase -i (reword): Navigator: Fix console documentation
+c0bf9306 HEAD@{80}: rebase -i: fast-forward
+1cc01263 HEAD@{81}: rebase -i (start): checkout origin/master
+51d25f2c HEAD@{82}: rebase finished: returning to refs/heads/navigator-console-json-arguments
+51d25f2c HEAD@{83}: rebase: Navigator: Output arguments in JSON format
+c0bf9306 HEAD@{84}: rebase: Navigator: fix console documentation
+1cc01263 HEAD@{85}: rebase: checkout origin/master
+7c47e22b HEAD@{86}: checkout: moving from master to navigator-console-json-arguments
+7c47e22b HEAD@{87}: commit: Navigator: Output arguments in JSON format
+2c0abebc HEAD@{88}: commit: Navigator: fix console documentation
+f1f494ad HEAD@{89}: checkout: moving from sandbox-sql-key-hashing to master
+7e00c709 HEAD@{90}: rebase finished: returning to refs/heads/sandbox-sql-key-hashing
+7e00c709 HEAD@{91}: rebase: wip
+d49f12a4 HEAD@{92}: rebase: wip
+f1f494ad HEAD@{93}: rebase: checkout origin/master
+15813b68 HEAD@{94}: checkout: moving from master to sandbox-sql-key-hashing
+f1f494ad HEAD@{95}: reset: moving to origin/master
+8655a792 HEAD@{96}: checkout: moving from sandbox-sql-key-hashing to master
+15813b68 HEAD@{97}: commit: wip
+128a36bb HEAD@{98}: checkout: moving from master to sandbox-sql-key-hashing
+8655a792 HEAD@{99}: checkout: moving from sandbox-sql-key-hashing to master
+128a36bb HEAD@{100}: commit (amend): wip
+ea6d3ad5 HEAD@{101}: commit: wip
+8655a792 HEAD@{102}: checkout: moving from master to sandbox-sql-key-hashing
+8655a792 HEAD@{103}: pull: Fast-forward
+a0573b12 HEAD@{104}: checkout: moving from navigator-encode-party-names to master
+72aea00e HEAD@{105}: rebase -i (finish): returning to refs/heads/navigator-encode-party-names
+72aea00e HEAD@{106}: rebase -i (reword): Navigator: URLEncode party names for Akka
+f6b672fd HEAD@{107}: rebase -i: fast-forward
+a0573b12 HEAD@{108}: rebase -i (start): checkout origin/master
+f6b672fd HEAD@{109}: checkout: moving from navigator-verbose-messages to navigator-encode-party-names
+7c23657f HEAD@{110}: rebase -i (finish): returning to refs/heads/navigator-verbose-messages
+7c23657f HEAD@{111}: rebase -i (fixup): Navigator: Print important messages to stderr
+5bde9e51 HEAD@{112}: rebase -i (pick): Navigator: Print important messages to stderr
+a0573b12 HEAD@{113}: rebase -i (start): checkout origin/master
+3498521d HEAD@{114}: commit: fixup
+38297e03 HEAD@{115}: checkout: moving from navigator-encode-party-names to navigator-verbose-messages
+f6b672fd HEAD@{116}: commit: Navigator: URLEncode party names for Akka
+a0573b12 HEAD@{117}: checkout: moving from master to navigator-encode-party-names
+a0573b12 HEAD@{118}: pull: Fast-forward
+6e7988ee HEAD@{119}: checkout: moving from navigator-verbose-messages to master
+38297e03 HEAD@{120}: rebase -i (finish): returning to refs/heads/navigator-verbose-messages
+38297e03 HEAD@{121}: rebase -i (reword): Navigator: Print important messages to stderr
+16f0dc05 HEAD@{122}: rebase -i: fast-forward
+6e7988ee HEAD@{123}: rebase -i (start): checkout origin/master
+16f0dc05 HEAD@{124}: commit: Navigator: Print important messages to stderr
+6e7988ee HEAD@{125}: checkout: moving from master to navigator-verbose-messages
+6e7988ee HEAD@{126}: pull: Fast-forward
+bfa01999 HEAD@{127}: checkout: moving from sandbox-sql-contract-keys to master
+2caa7f29 HEAD@{128}: commit (amend): Address reviewer comments
+68e6ff66 HEAD@{129}: commit: Address reviewer comments
+3f2f1bf0 HEAD@{130}: commit: Address review comments
+fc691f6b HEAD@{131}: commit (amend): Add support for contract key to SQL backend
+cb8b076a HEAD@{132}: commit (amend): Add support for contract key to SQL backend
+005ba9e0 HEAD@{133}: rebase finished: returning to refs/heads/sandbox-sql-contract-keys
+005ba9e0 HEAD@{134}: rebase: Add support for contract key to SQL backend
+f5378853 HEAD@{135}: rebase: checkout origin/master
+62076b0f HEAD@{136}: commit (amend): Add support for contract key to SQL backend
+537bd79a HEAD@{137}: commit (amend): Add support for contract key to SQL backend
+af6ad365 HEAD@{138}: rebase finished: returning to refs/heads/sandbox-sql-contract-keys
+af6ad365 HEAD@{139}: rebase: Add support for contract key to SQL backend
+f145ba08 HEAD@{140}: rebase: checkout origin/master
+50df81f7 HEAD@{141}: rebase finished: returning to refs/heads/sandbox-sql-contract-keys
+50df81f7 HEAD@{142}: rebase: Add support for contract key to SQL backend
+2f3189db HEAD@{143}: rebase: checkout origin/master
+687ef2f7 HEAD@{144}: commit (amend): Add support for contract key to SQL backend
+7af9eeac HEAD@{145}: commit (amend): Add support for contract key to SQL backend
+3729408e HEAD@{146}: commit (amend): Add support for contract key to SQL backend
+6b9c8b01 HEAD@{147}: commit (amend): Add support for contract key to SQL backend
+edd70d37 HEAD@{148}: commit (amend): Add support for contract key to SQL backend
+0b6b8030 HEAD@{149}: rebase finished: returning to refs/heads/sandbox-sql-contract-keys
+0b6b8030 HEAD@{150}: rebase: Add support for contract key to SQL backend
+b37474b0 HEAD@{151}: rebase: checkout origin/master
+de5ed0dd HEAD@{152}: commit (amend): Add support for contract key to SQL backend
+e551ad20 HEAD@{153}: checkout: moving from master to sandbox-sql-contract-keys
+bfa01999 HEAD@{154}: pull: Fast-forward
+e775b497 HEAD@{155}: checkout: moving from sandbox-sql-contract-keys to master
+e551ad20 HEAD@{156}: commit (amend): Add support for contract key to SQL backend
+d4b4f372 HEAD@{157}: commit: Add support for contract key to SQL backend
+e775b497 HEAD@{158}: checkout: moving from master to sandbox-sql-contract-keys
+e775b497 HEAD@{159}: pull: Fast-forward
+ed8ed6e9 HEAD@{160}: checkout: moving from master to master
+ed8ed6e9 HEAD@{161}: pull: Fast-forward
+1db23f95 HEAD@{162}: checkout: moving from navigator-update-webpack to master
+1db23f95 HEAD@{163}: reset: moving to master
+1db23f95 HEAD@{164}: checkout: moving from master to navigator-update-webpack
+1db23f95 HEAD@{165}: checkout: moving from navigator-tests-git-revision to master
+31f759e4 HEAD@{166}: commit: Navigator: remove test dependency on git revision
+1db23f95 HEAD@{167}: checkout: moving from master to navigator-tests-git-revision
+1db23f95 HEAD@{168}: checkout: moving from navigator-frontend-config-docs to master
+f10c6ec6 HEAD@{169}: commit: Update Navigator customizable table views docs
+1db23f95 HEAD@{170}: checkout: moving from master to navigator-frontend-config-docs
+1db23f95 HEAD@{171}: pull: Fast-forward
+52ce9767 HEAD@{172}: checkout: moving from sandbox-sql-acs-streaming to master
+b2f24223 HEAD@{173}: reset: moving to HEAD
+b2f24223 HEAD@{174}: reset: moving to HEAD
+b2f24223 HEAD@{175}: commit: scalafmt
+dea0877f HEAD@{176}: commit: cleanup
+4ce55e5c HEAD@{177}: pull: Fast-forward
+16d12c76 HEAD@{178}: rebase -i (finish): returning to refs/heads/sandbox-sql-acs-streaming
+16d12c76 HEAD@{179}: rebase -i (fixup): fixup
+b0762374 HEAD@{180}: rebase -i (fixup): # This is a combination of 2 commits.
+425c4540 HEAD@{181}: rebase -i (start): checkout origin/sandbox-sql-acs-streaming
+0c5f721c HEAD@{182}: commit: fixup
+b1352e04 HEAD@{183}: commit: fixup
+425c4540 HEAD@{184}: checkout: moving from master to sandbox-sql-acs-streaming
+52ce9767 HEAD@{185}: pull: Fast-forward
+05e691f5 HEAD@{186}: checkout: moving from sandbox-sql-acs-streaming to master
+425c4540 HEAD@{187}: commit: fixup
+eec47a3a HEAD@{188}: reset: moving to eec47a3a9a347d0037138b110dba0158c4112a99
+1707aaa9 HEAD@{189}: checkout: moving from sandbox-sql-acs-streaming2 to sandbox-sql-acs-streaming
+eec47a3a HEAD@{190}: checkout: moving from eec47a3a9a347d0037138b110dba0158c4112a99 to sandbox-sql-acs-streaming2
+eec47a3a HEAD@{191}: checkout: moving from sandbox-sql-acs-streaming to eec47a3
+1707aaa9 HEAD@{192}: reset: moving to 1707aaa9fd9eda4deaba493f0afd5822fb31f4e6
+c2d9363c HEAD@{193}: checkout: moving from eec47a3a9a347d0037138b110dba0158c4112a99 to sandbox-sql-acs-streaming
+eec47a3a HEAD@{194}: commit: wip ActiveContracts
+1707aaa9 HEAD@{195}: checkout: moving from sandbox-sql-acs-streaming to 1707aaa9fd9eda4deaba493f0afd5822fb31f4e6
+c2d9363c HEAD@{196}: reset: moving to HEAD
+c2d9363c HEAD@{197}: commit: Refactor ActiveContract to a separate file
+9c35ba35 HEAD@{198}: commit (amend): Split ActiveContracts to SQL and inmemory parts
+73c5b8c6 HEAD@{199}: commit: Split ActiveContracts to SQL and inmemory parts
+1707aaa9 HEAD@{200}: checkout: moving from navigator-cleanup-readmes to sandbox-sql-acs-streaming
+bb90a741 HEAD@{201}: rebase -i (finish): returning to refs/heads/navigator-cleanup-readmes
+bb90a741 HEAD@{202}: rebase -i (pick): Navigator: Remove unused Makefile targets
+7aa7c820 HEAD@{203}: rebase -i (reword): Navigator: Update readme files
+02bcaf2c HEAD@{204}: rebase -i (start): checkout origin/master
+876ac062 HEAD@{205}: reset: moving to HEAD
+876ac062 HEAD@{206}: commit: Navigator: Remove unused Makefile targets
+9bc0ec18 HEAD@{207}: commit: Navigator: update readme files
+1707aaa9 HEAD@{208}: checkout: moving from sandbox-sql-acs-streaming to navigator-cleanup-readmes
+1707aaa9 HEAD@{209}: checkout: moving from navigator-fronendconfig-2 to sandbox-sql-acs-streaming
+f28c917d HEAD@{210}: commit: Fix sorting of Navigator columns in docs template
+79971905 HEAD@{211}: commit (amend): Navigator: Add frontend-config version 2.0
+11c41256 HEAD@{212}: checkout: moving from master to navigator-fronendconfig-2
+05e691f5 HEAD@{213}: reset: moving to origin/master
+11c41256 HEAD@{214}: checkout: moving from navigator-fronendconfig-2 to master
+11c41256 HEAD@{215}: checkout: moving from master to navigator-fronendconfig-2
+11c41256 HEAD@{216}: commit: Navigator: Add frontend-config version 2.0
+05e691f5 HEAD@{217}: clone: from git@github.com:digital-asset/daml.git

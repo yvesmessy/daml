@@ -19,6 +19,7 @@ import com.digitalasset.daml.lf.value.Value.AbsoluteContractId
 import com.digitalasset.ledger.backend.api.v1.RejectionReason
 import com.digitalasset.ledger.backend.api.v1.RejectionReason._
 import com.digitalasset.platform.common.util.DirectExecutionContext
+import com.digitalasset.platform.common.util.DirectExecutionContext
 import com.digitalasset.platform.sandbox.stores._
 import com.digitalasset.platform.sandbox.stores.ledger.LedgerEntry
 import com.digitalasset.platform.sandbox.stores.ledger.LedgerEntry.{
@@ -260,6 +261,9 @@ private class PostgresLedgerDao(
   private val SQL_BATCH_INSERT_DISCLOSURES =
     "insert into disclosures(transaction_id, event_id, party) values({transaction_id}, {event_id}, {party})"
 
+  private val SQL_BATCH_INSERT_DIVULGENCES =
+    "insert into contract_divulgences(contract_id, party) values({contract_id}, {party})"
+
   private val SQL_INSERT_CHECKPOINT =
     SQL(
       "insert into ledger_entries(typ, ledger_offset, recorded_at) values('checkpoint', {ledger_offset}, {recorded_at})")
@@ -269,7 +273,11 @@ private class PostgresLedgerDao(
     * Note: This involves checking the validity of the given DAML transaction.
     * Invalid transactions trigger a rollback of the current SQL transaction.
     */
-  private def updateActiveContractSet(offset: Long, tx: Transaction)(
+  private def updateActiveContractSet(
+      offset: Long,
+      tx: Transaction,
+      localImplicitDisclosure: Relation[LedgerEntry.EventId, Ref.Party],
+      globalImplicitDisclosure: Relation[AbsoluteContractId, Ref.Party])(
       implicit connection: Connection): Option[RejectionReason] = tx match {
     case Transaction(
         _,
@@ -309,9 +317,30 @@ private class PostgresLedgerDao(
           this
         }
 
-        // TODO need another table for this, or alter same table as `addContract` uses
-        def implicitlyDisclose(global: Relation[AbsoluteContractId, Ref.Party]) =
+        def implicitlyDisclose(global: Relation[AbsoluteContractId, Ref.Party]) = {
+          val divulgenceParams = global
+            .flatMap {
+              case (cid, parties) =>
+                parties.map(
+                  p =>
+                    Seq[NamedParameter](
+                      "contract_id" -> cid.coid,
+                      "party" -> (p: String)
+                  ))
+            }
+          // Note: the in-memory ledger only stores divulgence for contracts in the ACS.
+          // Do we need here the equivalent to 'contracts.intersectWith(global)', used in the in-memory
+          // implementation of implicitlyDisclose?
+          if (divulgenceParams.nonEmpty) {
+            val batchInsertDivulgences =
+              BatchSql(
+                SQL_BATCH_INSERT_DIVULGENCES,
+                divulgenceParams.head,
+                divulgenceParams.drop(1).toArray: _*)
+            batchInsertDivulgences.execute()
+          }
           this
+        }
       }
 
       //this should be a class member field, we can't move it out yet as the functions above are closing over to the implicit Connection
@@ -325,9 +354,8 @@ private class PostgresLedgerDao(
         workflowId,
         transaction,
         mappedDisclosure,
-        // TODO blind `transaction` for these two maps, reenable SandboxSemanticTestsLfRunner and Memory-only test in CommandTransactionChecks
-        Map.empty,
-        Map.empty
+        localImplicitDisclosure,
+        globalImplicitDisclosure
       )
 
       atr match {
@@ -341,102 +369,109 @@ private class PostgresLedgerDao(
   override def storeLedgerEntry(
       offset: Long,
       newLedgerEnd: Long,
-      ledgerEntry: LedgerEntry): Future[PersistenceResponse] = {
+      ledgerEntry: PersistenceEntry): Future[PersistenceResponse] = {
     import PersistenceResponse._
 
-    def insertEntry(le: LedgerEntry)(implicit conn: Connection): PersistenceResponse = le match {
-      case tx @ Transaction(
-            commandId,
-            transactionId,
-            applicationId,
-            submitter,
-            workflowId,
-            ledgerEffectiveTime,
-            recordedAt,
-            transaction,
-            explicitDisclosure) =>
-        Try {
-          SQL_INSERT_TRANSACTION
+    def insertEntry(le: PersistenceEntry)(implicit conn: Connection): PersistenceResponse =
+      le match {
+        case tx @ PersistenceEntry.Transaction(
+              Transaction(
+                commandId,
+                transactionId,
+                applicationId,
+                submitter,
+                workflowId,
+                ledgerEffectiveTime,
+                recordedAt,
+                transaction,
+                explicitDisclosure),
+              _,
+              _) =>
+          Try {
+            SQL_INSERT_TRANSACTION
+              .on(
+                "ledger_offset" -> offset,
+                "transaction_id" -> transactionId,
+                "command_id" -> commandId,
+                "application_id" -> applicationId,
+                "submitter" -> submitter,
+                "workflow_id" -> workflowId,
+                "effective_at" -> ledgerEffectiveTime,
+                "recorded_at" -> recordedAt,
+                "transaction" -> transactionSerializer
+                  .serialiseTransaction(transaction)
+                  .getOrElse(sys.error(s"failed to serialise transaction! trId: ${transactionId}"))
+              )
+              .execute()
+
+            val disclosureParams = explicitDisclosure.flatMap {
+              case (eventId, parties) =>
+                parties.map(
+                  p =>
+                    Seq[NamedParameter](
+                      "transaction_id" -> transactionId,
+                      "event_id" -> eventId,
+                      "party" -> p
+                  ))
+            }
+            if (!disclosureParams.isEmpty) {
+              val batchInsertDisclosures =
+                BatchSql(
+                  SQL_BATCH_INSERT_DISCLOSURES,
+                  disclosureParams.head,
+                  disclosureParams.drop(1).toArray: _*)
+              batchInsertDisclosures.execute()
+            }
+
+            updateActiveContractSet(
+              offset,
+              tx.entry,
+              tx.localImplicitDisclosure,
+              tx.globalImplicitDisclosure).fold[PersistenceResponse](Ok) { rejectionReason =>
+              // we need to rollback the existing sql transaction
+              conn.rollback()
+              insertEntry(
+                PersistenceEntry.Rejection(
+                  Rejection(
+                    recordedAt,
+                    commandId,
+                    applicationId,
+                    submitter,
+                    rejectionReason
+                  )))
+            }
+          }.recover {
+            case NonFatal(e) if (e.getMessage.contains("duplicate key")) =>
+              logger.warn(
+                "Ignoring duplicate submission for applicationId {}, commandId {}",
+                tx.entry.applicationId: Any,
+                tx.entry.commandId)
+              conn.rollback()
+              Duplicate
+          }.get
+
+        case PersistenceEntry.Rejection(
+            Rejection(recordTime, commandId, applicationId, submitter, rejectionReason)) =>
+          val (rejectionDescription, rejectionType) = writeRejectionReason(rejectionReason)
+          SQL_INSERT_REJECTION
             .on(
               "ledger_offset" -> offset,
-              "transaction_id" -> transactionId,
               "command_id" -> commandId,
               "application_id" -> applicationId,
               "submitter" -> submitter,
-              "workflow_id" -> workflowId,
-              "effective_at" -> ledgerEffectiveTime,
-              "recorded_at" -> recordedAt,
-              "transaction" -> transactionSerializer
-                .serialiseTransaction(transaction)
-                .fold(
-                  e => sys.error(s"failed to serialise transaction! trId: ${transactionId}: $e"),
-                  identity
-                )
+              "recorded_at" -> recordTime,
+              "rejection_description" -> rejectionDescription,
+              "rejection_type" -> rejectionType
             )
             .execute()
+          Ok
 
-          val disclosureParams = explicitDisclosure.flatMap {
-            case (eventId, parties) =>
-              parties.map(
-                p =>
-                  Seq[NamedParameter](
-                    "transaction_id" -> transactionId,
-                    "event_id" -> eventId,
-                    "party" -> p
-                ))
-          }
-          if (!disclosureParams.isEmpty) {
-            val batchInsertDisclosures =
-              BatchSql(
-                SQL_BATCH_INSERT_DISCLOSURES,
-                disclosureParams.head,
-                disclosureParams.drop(1).toArray: _*)
-            batchInsertDisclosures.execute()
-          }
-
-          updateActiveContractSet(offset, tx).fold[PersistenceResponse](Ok) { rejectionReason =>
-            // we need to rollback the existing sql transaction
-            conn.rollback()
-            insertEntry(
-              Rejection(
-                recordedAt,
-                commandId,
-                applicationId,
-                submitter,
-                rejectionReason
-              ))
-          }
-        }.recover {
-          case NonFatal(e) if (e.getMessage.contains("duplicate key")) =>
-            logger.warn(
-              "Ignoring duplicate submission for applicationId {}, commandId {}",
-              tx.applicationId: Any,
-              tx.commandId)
-            conn.rollback()
-            Duplicate
-        }.get
-
-      case Rejection(recordTime, commandId, applicationId, submitter, rejectionReason) =>
-        val (rejectionDescription, rejectionType) = writeRejectionReason(rejectionReason)
-        SQL_INSERT_REJECTION
-          .on(
-            "ledger_offset" -> offset,
-            "command_id" -> commandId,
-            "application_id" -> applicationId,
-            "submitter" -> submitter,
-            "recorded_at" -> recordTime,
-            "rejection_description" -> rejectionDescription,
-            "rejection_type" -> rejectionType
-          )
-          .execute()
-        Ok
-
-      case Checkpoint(recordedAt) =>
-        SQL_INSERT_CHECKPOINT
-          .on("ledger_offset" -> offset, "recorded_at" -> recordedAt)
-          .execute()
-        Ok
-    }
+        case PersistenceEntry.Checkpoint(Checkpoint(recordedAt)) =>
+          SQL_INSERT_CHECKPOINT
+            .on("ledger_offset" -> offset, "recorded_at" -> recordedAt)
+            .execute()
+          Ok
+      }
 
     dbDispatcher
       .executeSql { implicit conn =>
@@ -444,6 +479,13 @@ private class PostgresLedgerDao(
         updateLedgerEnd(newLedgerEnd)
         resp
       }
+  }
+
+  override def storeInitialState(
+      acs: ActiveContractsInMemory,
+      ledgerEntries: immutable.Seq[LedgerEntry]
+  ): Future[Unit] = {
+    ???
   }
 
   private def writeRejectionReason(rejectionReason: RejectionReason) =
@@ -596,6 +638,9 @@ private class PostgresLedgerDao(
   private val SQL_SELECT_WITNESS =
     SQL("select witness from contract_witnesses where contract_id={contract_id}")
 
+  private val SQL_SELECT_DIVULGENCE =
+    SQL("select party from contract_divulgences where contract_id={contract_id}")
+
   private val SQL_SELECT_KEY_MAINTAINERS =
     SQL("select maintainer from contract_key_maintainers where contract_id={contract_id}")
 
@@ -617,6 +662,7 @@ private class PostgresLedgerDao(
     contractResult match {
       case (coid, transactionId, workflowId, createdAt, contractStream, keyStreamO) =>
         val witnesses = lookupWitnesses(coid)
+        val divulgences = lookupDivulgences(coid)
 
         Contract(
           AbsoluteContractId(coid),
@@ -624,6 +670,7 @@ private class PostgresLedgerDao(
           transactionId,
           workflowId,
           witnesses.map(Ref.Party.assertFromString),
+          divulgences.map(Ref.Party.assertFromString),
           contractSerializer
             .deserialiseContractInstance(ByteStreams.toByteArray(contractStream))
             .getOrElse(sys.error(s"failed to deserialise contract! cid:$coid")),
@@ -641,6 +688,12 @@ private class PostgresLedgerDao(
     SQL_SELECT_WITNESS
       .on("contract_id" -> coid)
       .as(SqlParser.str("witness").*)
+      .toSet
+
+  private def lookupDivulgences(coid: String)(implicit conn: Connection) =
+    SQL_SELECT_DIVULGENCE
+      .on("contract_id" -> coid)
+      .as(SqlParser.str("party").*)
       .toSet
 
   private def lookupKeyMaintainers(coid: String)(implicit conn: Connection) =
