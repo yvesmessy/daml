@@ -64,12 +64,9 @@ import           Control.Exception
 import           Control.DeepSeq
 import           System.Time.Extra
 import           Data.Typeable
-import           Data.Tuple.Extra
-import System.Directory
 import           System.FilePath
 import qualified Development.Shake as Shake
 import           Control.Monad.Extra
-import qualified Data.Set as Set
 import           Data.Time
 import           System.IO.Unsafe
 import           Numeric.Extra
@@ -276,8 +273,9 @@ unsafeClearAllDiagnostics IdeState{shakeExtras = ShakeExtras{diagnostics}} =
 -- | Clear the results for all files that do not match the given predicate.
 garbageCollect :: (FilePath -> Bool) -> Action ()
 garbageCollect keep = do
-    ShakeExtras{state} <- getShakeExtras
+    ShakeExtras{state, diagnostics} <- getShakeExtras
     liftIO $ modifyVar_ state $ return . Map.filterWithKey (\file _ -> keep file)
+    liftIO $ modifyVar_ diagnostics $ pure . filterDiagnostics keep
 
 define
     :: IdeRule k v
@@ -392,7 +390,7 @@ updateFileDiagnostics ::
   -> Action ()
 updateFileDiagnostics fp k diagnosticsV current = do
     previous <- liftIO $ modifyVar diagnosticsV $ \old ->
-        (,) <$> (setStageDiagnostics fp k current old) <*> (getStageDiagnostics fp k old)
+        (,) <$> (setStageDiagnostics fp k current old) <*> (getFileDiagnostics fp old)
     when (current /= previous) $
         sendEvent $ EventFileDiagnostics $ (fp, current)
 

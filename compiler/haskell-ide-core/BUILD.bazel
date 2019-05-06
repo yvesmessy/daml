@@ -28,6 +28,7 @@ da_haskell_library(
         "shake",
         "stm",
         "syb",
+        "sorted-list",
         "text",
         "time",
         "transformers",
