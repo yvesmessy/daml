@@ -401,9 +401,9 @@ load("//bazel_tools:haskell.bzl", "add_extra_packages")
 # For the time being we build with GMP. See https://github.com/digital-asset/daml/issues/106
 use_integer_simple = not is_windows
 
-HASKELL_LSP_COMMIT = "15096280b3542d56d8df728d3bce9ea34141debd"
+HASKELL_LSP_COMMIT = "57af6b3e524dde5fe246434080b1e310ac8cfdec"
 
-HASKELL_LSP_HASH = "170de7aeb1da63198139a667c074a05f7ecd30017d54c78569a6aa1cc565be89"
+HASKELL_LSP_HASH = "56d625f9664e5860ea20dcd8ec66d732afce84ccd9d1bd896b14e760c6015cee"
 
 hazel_repositories(
     core_packages = core_packages + {
