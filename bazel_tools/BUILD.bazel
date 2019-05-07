@@ -2,6 +2,11 @@
 # SPDX-License-Identifier: Apache-2.0
 
 # Export Bazel sources for Bazel API docs.
+load(
+    "@bazel_tools//tools/jdk:default_java_toolchain.bzl",
+    "default_java_toolchain",
+)
+
 exports_files(
     [
         "haskell.bzl",
@@ -15,4 +20,20 @@ exports_files(
         "pom_template.xml",
     ],
     visibility = ["//:__subpackages__"],
+)
+
+default_java_toolchain(
+    name = "toolchain_jdk11",
+    # Without this we get the following warning:
+    # warning: -parameters is not supported for target value 1.7. Use 1.8 or later.
+    compatible_javacopts = {"proto": [
+        "-source",
+        "8",
+        "-target",
+        "8",
+    ]},
+    forcibly_disable_header_compilation = True,
+    javabuilder = ["@bazel_tools//tools/jdk:vanillajavabuilder"],
+    jvm_opts = [],
+    visibility = ["//visibility:public"],
 )
