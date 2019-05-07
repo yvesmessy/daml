@@ -165,6 +165,10 @@ private class PostgresLedgerDao(
   private def storeContracts(offset: Long, contracts: immutable.Seq[Contract])(
       implicit connection: Connection): Unit = {
 
+    // A ACS contract contains several collections (e.g., witnesses or divulgences).
+    // The contract is therefore stored in several SQL tables.
+
+    // Part 1: insert the contract data into the 'contracts' table
     if (!contracts.isEmpty) {
       val namedContractParams = contracts
         .map(
@@ -196,6 +200,7 @@ private class PostgresLedgerDao(
 
       batchInsertContracts.execute()
 
+      // Part 2: insert witnesses into the 'contract_witnesses' table
       val namedWitnessesParams = contracts
         .flatMap(
           c =>
@@ -217,6 +222,29 @@ private class PostgresLedgerDao(
         batchInsertWitnesses.execute()
       }
 
+      // Part 3: insert divulgences into the 'contract_divulgences' table
+      val namedDivulgenceParams = contracts
+        .flatMap(
+          c =>
+            c.divulgences.map(
+              w =>
+                Seq[NamedParameter](
+                  "contract_id" -> c.contractId.coid,
+                  "party" -> (w: String)
+                ))
+        )
+        .toArray
+
+      if (!namedDivulgenceParams.isEmpty) {
+        val batchInsertDivulgences = BatchSql(
+          SQL_BATCH_INSERT_DIVULGENCES,
+          namedDivulgenceParams.head,
+          namedDivulgenceParams.drop(1).toArray: _*
+        )
+        batchInsertDivulgences.execute()
+      }
+
+      // Part 4: insert key maintainers into the 'contract_key_maintainers' table
       val namedKeyMaintainerParams = contracts
         .flatMap(
           c =>
