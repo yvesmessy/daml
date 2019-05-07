@@ -10,6 +10,7 @@ import com.digitalasset.api.util.TimeProvider
 import com.digitalasset.daml.lf.transaction.Node
 import com.digitalasset.daml.lf.value.Value
 import com.digitalasset.daml.lf.value.Value.VersionedValue
+import com.digitalasset.ledger.backend.api.v1.LedgerSyncEvent.AcceptedTransaction
 import com.digitalasset.ledger.backend.api.v1.SubmissionResult.Acknowledged
 import com.digitalasset.ledger.backend.api.v1._
 import com.digitalasset.platform.sandbox.config.DamlPackageContainer
@@ -132,5 +133,9 @@ class Handle(ledger: Ledger, ledgerSyncOffset: LedgerSyncOffset, ec: ExecutionCo
       submitter: Party,
       key: Node.GlobalKey): Future[Option[Value.AbsoluteContractId]] =
     sys.error("contract keys not implemented in example backend")
+
+  //TODO: Jussi, do I need to implement this?
+  override def getTransactionById(
+      transactionId: TransactionId): Future[Option[AcceptedTransaction]] = ???
 
 }
