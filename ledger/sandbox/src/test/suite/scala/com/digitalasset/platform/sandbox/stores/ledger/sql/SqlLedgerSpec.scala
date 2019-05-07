@@ -30,7 +30,7 @@ class SqlLedgerSpec
         jdbcUrl = postgresFixture.jdbcUrl,
         ledgerId = None,
         timeProvider = TimeProvider.UTC,
-        acs = ActiveContractsInMemory(Map.empty, Map.empty),
+        acs = ActiveContractsInMemory.empty,
         ledgerEntries = Nil)
 
       ledgerF.map { ledger =>
@@ -45,7 +45,7 @@ class SqlLedgerSpec
         jdbcUrl = postgresFixture.jdbcUrl,
         ledgerId = Some(ledgerId),
         timeProvider = TimeProvider.UTC,
-        acs = ActiveContractsInMemory(Map.empty, Map.empty),
+        acs = ActiveContractsInMemory.empty,
         ledgerEntries = Nil
       )
 
@@ -62,21 +62,21 @@ class SqlLedgerSpec
           jdbcUrl = postgresFixture.jdbcUrl,
           ledgerId = Some(ledgerId),
           timeProvider = TimeProvider.UTC,
-          acs = ActiveContractsInMemory(Map.empty, Map.empty),
+          acs = ActiveContractsInMemory.empty,
           ledgerEntries = Nil
         )
         ledger2 <- SqlLedger(
           jdbcUrl = postgresFixture.jdbcUrl,
           ledgerId = Some(ledgerId),
           timeProvider = TimeProvider.UTC,
-          acs = ActiveContractsInMemory(Map.empty, Map.empty),
+          acs = ActiveContractsInMemory.empty,
           ledgerEntries = Nil
         )
         ledger3 <- SqlLedger(
           jdbcUrl = postgresFixture.jdbcUrl,
           ledgerId = None,
           timeProvider = TimeProvider.UTC,
-          acs = ActiveContractsInMemory(Map.empty, Map.empty),
+          acs = ActiveContractsInMemory.empty,
           ledgerEntries = Nil)
       } yield {
         ledger1.ledgerId should not be equal(ledgerId)
@@ -93,14 +93,14 @@ class SqlLedgerSpec
           ledgerId = Some("TheLedger"),
           timeProvider = TimeProvider.UTC,
           ledgerEntries = Nil,
-          acs = ActiveContractsInMemory(Map.empty, Map.empty),
+          acs = ActiveContractsInMemory.empty,
         )
         _ <- SqlLedger(
           jdbcUrl = postgresFixture.jdbcUrl,
           ledgerId = Some("AnotherLedger"),
           timeProvider = TimeProvider.UTC,
           ledgerEntries = Nil,
-          acs = ActiveContractsInMemory(Map.empty, Map.empty),
+          acs = ActiveContractsInMemory.empty,
         )
       } yield (())
 
