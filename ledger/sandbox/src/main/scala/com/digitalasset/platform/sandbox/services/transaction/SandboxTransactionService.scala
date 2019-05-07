@@ -199,6 +199,7 @@ class SandboxTransactionService private (val ledgerBackend: LedgerBackend, paral
   private def lookUpTreeByTransactionId(
       transactionId: TransactionId,
       requestingParties: Set[Party]): Future[Option[VisibleTransaction]] = {
+    //TODO: make an o1 lookup
     transactionPipeline
       .run(LedgerOffset.LedgerBegin, Some(LedgerOffset.LedgerEnd))
       .collect {
@@ -220,6 +221,7 @@ class SandboxTransactionService private (val ledgerBackend: LedgerBackend, paral
   private def lookUpFlatByTransactionId(
       transactionId: TransactionId,
       requestingParties: Set[Party]): Future[Option[PTransaction]] = {
+    //TODO make an o1 lookup
     transactionPipeline
       .run(LedgerOffset.LedgerBegin, Some(LedgerOffset.LedgerEnd))
       .collect {

@@ -16,7 +16,7 @@ import scala.collection.JavaConverters._
 // SQL MIGRATION AND THEIR DIGEST FILES SHOULD BE CREATED ONLY ONCE AND NEVER CHANGED AGAIN,
 // OTHERWISE MIGRATIONS BREAK ON EXISTING DEPLOYMENTS!
 @SuppressWarnings(Array("org.wartremover.warts.Any", "org.wartremover.warts.StringPlusAny"))
-class FlywayMigrationsSpec extends WordSpec with Matchers {
+class FlywayMigrationFilesSpec extends WordSpec with Matchers {
 
   private val digester = MessageDigest.getInstance("SHA-256")
 
