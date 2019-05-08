@@ -16,14 +16,15 @@ import com.digitalasset.ledger.api.v1.commands.{Command, CreateCommand}
 import com.digitalasset.ledger.api.v1.completion.Completion
 import com.digitalasset.ledger.api.v1.value.Value.Sum
 import com.digitalasset.ledger.api.v1.value.{Identifier, Record, RecordField, Value}
-import com.digitalasset.platform.PlatformApplications
+import com.digitalasset.platform.apitesting.MultiLedgerFixture
 import com.digitalasset.util.Ctx
-import org.scalatest.Matchers
+import org.scalatest.{AsyncTestSuite, Matchers}
 
 import scala.concurrent.Future
 
-trait TransactionServiceHelpers extends Matchers {
-  lazy val defaultDar: File = PlatformApplications.Config.defaultDarFile
+trait TransactionServiceHelpers extends MultiLedgerFixture with Matchers {
+  self: AsyncTestSuite =>
+  lazy val defaultDar: File = config.darFiles.head.toFile
 
   lazy val parsedPackageId: String =
     UniversalArchiveReader().readFile(defaultDar).get.main._1
