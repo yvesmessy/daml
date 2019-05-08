@@ -134,7 +134,6 @@ class Handle(ledger: Ledger, ledgerSyncOffset: LedgerSyncOffset, ec: ExecutionCo
       key: Node.GlobalKey): Future[Option[Value.AbsoluteContractId]] =
     sys.error("contract keys not implemented in example backend")
 
-  //TODO: Jussi, do I need to implement this?
   override def getTransactionById(
       transactionId: TransactionId): Future[Option[AcceptedTransaction]] = ???
 
