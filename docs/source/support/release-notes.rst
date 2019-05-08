@@ -8,6 +8,7 @@ This page contains release notes for the SDK.
 
 HEAD — ongoing
 --------------
+- Making transaction lookups performant so we can handle such requests for large ledgers as well
 
 0.12.16 - 2019-05-07
 --------------------
