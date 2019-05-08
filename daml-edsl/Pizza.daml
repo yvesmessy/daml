@@ -1,0 +1,79 @@
+daml 1.2
+module Pizza where
+
+template (Num a, Ord a) => Pizza a with
+    makers : [Party]
+    eaters : [Party]
+    slices : a
+  where
+    signatory makers ++ eaters
+
+    choice Eat with slices : a
+      controller eaters
+      do
+        assert $ arg.slices > zero
+        let newSlices = this.slices - arg.slices
+        assert $ newSlices >= zero
+        if newSlices > zero
+          then Just <$> create this with slices = newSlices
+          else pure Nothing
+
+template instance Pizza_Int = Pizza Int
+
+
+template Template t => Option t with
+    asset : t
+    receivers : [Party]
+  where
+    signatory (signatory asset)
+
+    choice Call : ContractId t
+      controller receivers
+      do
+        create asset
+
+    choice Kill : ()
+      controller receivers
+      do
+        pure ()
+
+template instance Option_Pizza_Int = Option (Pizza Int)
+
+
+template Template t => Offer t  with
+    asset : t
+    receivers : [Party]
+  where
+    signatory (signatory asset \\ receivers)
+    observer receivers
+
+    choice Accept : ContractId t
+      controller receivers
+      do
+        create asset
+
+    choice Optionize : ContractId (Option t)
+      controller receivers
+      do
+        create Option with asset; receivers
+
+template instance Offer_Pizza_Int = Offer (Pizza Int)
+
+
+test = scenario do
+  luigi <- getParty "Luigi"
+  mario <- getParty "Mario"
+  let pizza = Pizza with
+        makers = [luigi]
+        eaters = [mario]
+        slices = 10
+  offerId <- submit luigi do
+    create Offer with
+      asset = pizza
+      receivers = [mario]
+  optionId <- submit mario do
+    exercise offerId Optionize
+  pizzaId <- submit mario do
+    exercise optionId Call
+  mbPizzaId <- submit mario do
+    exercise pizzaId Eat with slices = 2
