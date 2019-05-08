@@ -18,14 +18,15 @@ The Scala bindings library lets you write applications that connect to the Digit
 There are two main components:
 
 - The Akka Streams based API
-  The API to send commands to the ledger and receive transactions back.
+    The API to send commands to the ledger and receive transactions back.
 
 - Scala codegen
-  DAML to Scala code generator. Generates Scala classes from DAML models. The generated Scala code provides a type safe way of creating contracts (create command) and exercising contract choices (exercise command).
+    DAML to Scala code generator. Generates Scala classes from DAML models. The generated Scala code provides a type safe way of creating contracts (create command) and exercising contract choices (exercise command).
 
 The reader must be familiar with:
 
-- DAML language
+- DAML language (TODO insert link)
+- Ledger API (TODO insert link)
 - Akka Streams API
 - Scala programming language
 
